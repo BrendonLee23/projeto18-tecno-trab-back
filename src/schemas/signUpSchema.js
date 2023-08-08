@@ -1,12 +1,13 @@
 import joi from 'joi';
 
-const signUpSchema = joi.object({
-
-    name: joi.string().min(3).required(),
+// Esquema de validação para a tabela 'users'
+const userSchema = joi.object({
+    name: joi.string().required(),
+    born: joi.date().required(),
     email: joi.string().email().required(),
-    password: joi.string().min(5).required(),
-    confirmPassword: joi.string().min(5).required()
-
+    password: joi.string().required(),
+    address: joi.string().required(),
+    phoneNumber: joi.string().required()
 });
 
-export default signUpSchema;
+export default userSchema;
