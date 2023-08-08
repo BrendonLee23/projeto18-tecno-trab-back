@@ -45,7 +45,6 @@ export async function userLogin(req, res) {
 
     const { email, password } = req.body;
 
-
     try {
 
         const { rows: users } = await db.query(`
@@ -87,7 +86,7 @@ export async function userLogin(req, res) {
 }
 export async function getUser(req, res) {
 
-    const { user } = res.locals;
+/*     const { user } = res.locals;
 
     try {
         
@@ -97,6 +96,13 @@ export async function getUser(req, res) {
 
         res.send(e).status(500);
 
+    } */
+
+    try {
+        const users = await db.query(`SELECT id, name, to_char(born, 'YYYY-MM-DD') as born, email, password, address, phoneNumber FROM users;`)
+        res.send(users.rows).status(200)
+    } catch (err) {
+        res.status(500).send(err.message)
     }
 
 }
