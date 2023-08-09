@@ -78,17 +78,13 @@ export async function userLogin(req, res) {
     try {
 
         const { rows: users } = await db.query(`
-    
-    SELECT * FROM users WHERE email=$1
-
-`, [email]);
+        SELECT * FROM users WHERE email=$1
+        `, [email]);
 
         const [user] = users;
-        console.log(user)
+
         if (!user) {
-
             return res.sendStatus(401);
-
         }
 
         if (bcrypt.compareSync(password, user.password)) {
@@ -96,11 +92,8 @@ export async function userLogin(req, res) {
             const token = v4();
 
             await db.query(`
-    
-        INSERT INTO sessions(token, "userId") VALUES ($1, $2)
-    
-    `, [token, user.id]);
-
+            INSERT INTO sessions(token, "userId") VALUES ($1, $2)
+            `, [token, user.id]);
             return res.send({ token });
 
         } else {
@@ -116,20 +109,9 @@ export async function userLogin(req, res) {
 }
 export async function getUser(req, res) {
 
-/*     const { user } = res.locals;
 
     try {
-        
-        res.send(user).status(200);
-
-    } catch (e) {
-
-        res.send(e).status(500);
-
-    } */
-
-    try {
-        const users = await db.query(`SELECT id, name, to_char(born, 'YYYY-MM-DD') as born, email, password, address, phoneNumber FROM users;`)
+        const users = await db.query(`SELECT id, name, to_char(born, 'YYYY-MM-DD') as born, email, password, address, "phoneNumber" FROM users;`)
         res.send(users.rows).status(200)
     } catch (err) {
         res.status(500).send(err.message)
