@@ -4,6 +4,7 @@ CREATE TABLE users (
     "born" DATE,
     "email" TEXT UNIQUE NOT NULL,
     "password" TEXT NOT NULL,
+    "confirmPassword" TEXT NOT NULL,
     "address" TEXT,
     "phoneNumber" TEXT,
     "createdAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
