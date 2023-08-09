@@ -10,18 +10,48 @@ export async function createUser(req, res) {
 
     try {
 
+        let isValid = true;
+        let errorMessage = '';
+
+        function isValidDate(dateString) {
+            const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+            return dateString.match(dateRegex);
+        }
+
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return email.match(emailRegex);
+        }
+
         const existingUser = await db.query(`
             SELECT * FROM users WHERE email=$1
-        
         `, [user.email]);
 
         if (existingUser.rowCount > 0) {
-
-            return res.sendStatus(409);
-
+            isValid = false;
+            errorMessage = 'E-mail já cadastrado';
+        } else if (user.password !== user.confirmPassword) {
+            isValid = false;
+            errorMessage = 'As senhas não coincidem';
+        } else if (!isValidDate(user.born)) {
+            isValid = false;
+            errorMessage = 'Formato de data de nascimento inválido';
+        } else if (!isValidEmail(user.email)) {
+            isValid = false;
+            errorMessage = 'Formato de e-mail inválido';
+        } else if (!user.address) {
+            isValid = false;
+            errorMessage = 'O endereço é obrigatório';
+        } else if (!user.phoneNumber) {
+            isValid = false;
+            errorMessage = 'O número de telefone é obrigatório';
+        } else if (!user.name) {
+            isValid = false;
+            errorMessage = 'O nome é obrigatório';
         }
-        if (user.password != user.confirmPassword) {
-            return res.sendStatus(422);
+
+        if (!isValid) {
+            return res.status(400).send(errorMessage);
         }
 
         const passwordHash = bcrypt.hashSync(user.password, 10);
@@ -29,10 +59,10 @@ export async function createUser(req, res) {
 
         await db.query(`
         
-            INSERT INTO users(name, email, password, "confirmPassword")
-            VALUES ($1, $2, $3, $4)
+            INSERT INTO users(name, born, email, password, "confirmPassword", address, "phoneNumber")
+            VALUES ($1, $2, $3, $4, $5, $6, $7)
 
-        `, [user.name, user.email, passwordHash, confirmPasswordHash]);
+        `, [user.name, user.born, user.email, passwordHash, confirmPasswordHash, user.adress, user.phoneNumber]);
 
         res.sendStatus(201);
 
