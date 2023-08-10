@@ -109,7 +109,6 @@ export async function userLogin(req, res) {
 }
 export async function getUser(req, res) {
 
-
     try {
         const users = await db.query(`SELECT id, name, to_char(born, 'YYYY-MM-DD') as born, email, password, address, "phoneNumber" FROM users;`)
         res.send(users.rows).status(200)
