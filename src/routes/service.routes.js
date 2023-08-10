@@ -6,8 +6,9 @@ import { validateToken } from '../middlewares/authSchema.middleware.js';
 
 const serviceRouter = Router();
 
-serviceRouter.post('/service', validateSchema(serviceSchema), createService);
-serviceRouter.post('/service', validateToken, validateSchema(serviceSchema), createService);
-serviceRouter.get('/service',  getAllServices);
+/* serviceRouter.post('/service', validateSchema(serviceSchema), createService); */
+serviceRouter.get('/home', getAllServices);
+serviceRouter.post('/service/create', validateToken, validateSchema(serviceSchema), createService);
+serviceRouter.post('/service/edit', validateToken, createService);
 
 export default serviceRouter;

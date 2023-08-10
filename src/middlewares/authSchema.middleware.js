@@ -26,6 +26,7 @@ export async function validateToken(req, res, next) {
 
     }
 
+
     const { rows: users } = await db.query(
     
         `SELECT * FROM users WHERE id=$1`
@@ -34,11 +35,13 @@ export async function validateToken(req, res, next) {
 
     const [user] = users;
 
+
     if (!user) {
 
         return res.sendStatus(401);
 
     }
+
 
     res.locals.user = user;
 

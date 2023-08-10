@@ -59,7 +59,7 @@ export async function createUser(req, res) {
 
         await db.query(`
         
-            INSERT INTO users(name, born, email, password, "confirmPassword", address, "phoneNumber")
+            INSERT INTO users(name, to_char(born, 'YYYY-MM-DD') as born, email, password, "confirmPassword", address, "phoneNumber")
             VALUES ($1, $2, $3, $4, $5, $6, $7)
 
         `, [user.name, user.born, user.email, passwordHash, confirmPasswordHash, user.adress, user.phoneNumber]);
@@ -94,19 +94,17 @@ export async function userLogin(req, res) {
             await db.query(`
             INSERT INTO sessions(token, "userId") VALUES ($1, $2)
             `, [token, user.id]);
-            return res.send({ token });
-
-        } else {
+            return res.send( token );
+        } 
+        else {
             res.sendStatus(401)
         }
 
     } catch (error) {
         res.status(500).send(error.message);
     }
-
-
-
 }
+
 export async function getUser(req, res) {
 
     try {

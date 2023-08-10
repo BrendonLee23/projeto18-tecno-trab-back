@@ -2,16 +2,21 @@ import { db } from '../database/database.connection.js'
 
 export async function createService(req, res) {
 
+    const { user } = res.locals;
     const {name, image, description, phoneNumber} = req.body;
 
     try {
+        if (!name || !image || !description || !phoneNumber) {
+            return res.status(400).send("Todos os campos são obrigatórios!");
+        }
         const alreadyRegistered = await db.query(`SELECT FROM services WHERE name = $1`, [name])
         if (alreadyRegistered.rows.length > 0) {
             return res.status(409).send("Erro ao inserir jogo. O jogo já existe");
         }
+
         await db.query(
-            `INSERT INTO services (name, image, description, "phoneNumber") VALUES ($1, $2, $3, $4)`,
-            [name, image, description, phoneNumber]);
+            `INSERT INTO services (name, image, description, "providerId", "phoneNumber") VALUES ($1, $2, $3, $4, $5)`,
+            [name, image, description, user.id, phoneNumber]);
         res.sendStatus(201);
 
     } catch (err) {
