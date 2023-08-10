@@ -5,7 +5,7 @@ CREATE TABLE users (
     "email" TEXT UNIQUE NOT NULL,
     "password" TEXT NOT NULL,
     "confirmPassword" TEXT NOT NULL,
-    "address" TEXT,
+    "address" TEXT NOT NULL,
     "phoneNumber" TEXT,
     "createdAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

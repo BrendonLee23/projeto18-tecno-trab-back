@@ -2,6 +2,7 @@
 import bcrypt from 'bcrypt';
 import { db } from '../database/database.connection.js';
 import { v4 } from 'uuid';
+import { format } from 'date-fns'; 
 
 
 export async function createUser(req, res) {
@@ -9,7 +10,7 @@ export async function createUser(req, res) {
     const user = req.body;
 
     try {
-
+        console.log(user.address);
         let isValid = true;
         let errorMessage = '';
 
@@ -53,16 +54,20 @@ export async function createUser(req, res) {
         if (!isValid) {
             return res.status(400).send(errorMessage);
         }
+                console.log("teste")
 
         const passwordHash = bcrypt.hashSync(user.password, 10);
         const confirmPasswordHash = bcrypt.hashSync(user.confirmPassword, 10);
 
+        const formattedBorn = format(new Date(user.born), 'yyyy-MM-dd');
+
         await db.query(`
         
-            INSERT INTO users(name, to_char(born, 'YYYY-MM-DD') as born, email, password, "confirmPassword", address, "phoneNumber")
-            VALUES ($1, $2, $3, $4, $5, $6, $7)
+        INSERT INTO users (name, born, email, password, "confirmPassword", address, "phoneNumber")
+        VALUES ($1, $2, $3, $4, $5, $6, $7)
 
-        `, [user.name, user.born, user.email, passwordHash, confirmPasswordHash, user.adress, user.phoneNumber]);
+        `, [user.name, formattedBorn, user.email, passwordHash, confirmPasswordHash, user.address, user.phoneNumber]);
+
 
         res.sendStatus(201);
 
