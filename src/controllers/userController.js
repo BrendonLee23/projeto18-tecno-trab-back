@@ -10,7 +10,6 @@ export async function createUser(req, res) {
     const user = req.body;
 
     try {
-        console.log(user.address);
         let isValid = true;
         let errorMessage = '';
 
@@ -54,7 +53,6 @@ export async function createUser(req, res) {
         if (!isValid) {
             return res.status(400).send(errorMessage);
         }
-                console.log("teste")
 
         const passwordHash = bcrypt.hashSync(user.password, 10);
         const confirmPasswordHash = bcrypt.hashSync(user.confirmPassword, 10);
@@ -109,8 +107,7 @@ export async function userLogin(req, res) {
         res.status(500).send(error.message);
     }
 }
-
-export async function getUser(req, res) {
+export async function getUsers(req, res) {
 
     try {
         const users = await db.query(`SELECT id, name, to_char(born, 'YYYY-MM-DD') as born, email, password, address, "phoneNumber" FROM users;`)

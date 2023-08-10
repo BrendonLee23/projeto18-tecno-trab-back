@@ -133,11 +133,11 @@ export async function deleteService(req, res) {
         
         `, [id]);
 
-        if (user.id !== serviceResult[0].userId) {
+        if (user.id !== serviceResult[0].providerId) {
             return res.sendStatus(401);
         }
 
-        if (urlResult[0].length === 0) {
+        if (serviceResult[0].length === 0) {
             return res.sendStatus(404);
         }
 
