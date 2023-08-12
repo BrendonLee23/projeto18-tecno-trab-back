@@ -2,13 +2,12 @@ import pg from "pg"
 import dotenv from "dotenv"
 dotenv.config()
 
-const {Pool} = pg;
+const {Pool, Client} = pg;
 
-const configDatabase = {
+const configDatabase = new Client({
     connectionString: process.env.DATABASE_URL,
-    ssl: false
-};
-
+    ssl: { rejectUnauthorized: false }
+    })
 
 if (process.env.NODE_ENV === "production") configDatabase.ssl = true;
 
