@@ -6,7 +6,7 @@ CREATE TABLE users (
     "password" TEXT NOT NULL,
     "confirmPassword" TEXT NOT NULL,
     "address" TEXT NOT NULL,
-    "phoneNumber" TEXT,
+    "phoneNumber" TEXT NOT NULL,
     "createdAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -14,10 +14,10 @@ CREATE TABLE users (
 CREATE TABLE services (
     "id" SERIAL PRIMARY KEY,
     "name" TEXT NOT NULL,
-    "image" TEXT,
-    "description" TEXT,
+    "image" TEXT NOT NULL,
+    "description" TEXT NOT NULL,
     "providerId" INT REFERENCES users("id"),
-    "phoneNumber" TEXT,
+    "phoneNumber" TEXT NOT NULL,
     "isAvailable" BOOLEAN DEFAULT true,
     "createdAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

@@ -3,6 +3,7 @@ import bcrypt from 'bcrypt';
 import { db } from '../database/database.connection.js';
 import { v4 } from 'uuid';
 import { format } from 'date-fns'; 
+import userRepository from '../repository/user.repository.js';
 
 
 export async function createUser(req, res) {
@@ -23,9 +24,7 @@ export async function createUser(req, res) {
             return email.match(emailRegex);
         }
 
-        const existingUser = await db.query(`
-            SELECT * FROM users WHERE email=$1
-        `, [user.email]);
+        const existingUser = await userRepository.getUserByEmail(req.body);
 
         if (existingUser.rowCount > 0) {
             isValid = false;

@@ -37,15 +37,6 @@ export async function getAllServices(req, res) {
             return res.sendStatus(404);
         }
 
-/*         const response = {
-
-            "name": servicesList[0].name,
-            "image": servicesList[0].image,
-            "description": servicesList[0].description,
-            "phoneNumber": servicesList[0].phoneNumber
-
-        } */
-
         res.status(200).json(servicesList);
 
     } catch (err) {
@@ -54,7 +45,7 @@ export async function getAllServices(req, res) {
 
 }
 
-export async function getUrl(req, res) {
+export async function getServicesById(req, res) {
 
     const { id } = req.params;
 
@@ -88,7 +79,7 @@ export async function getUrl(req, res) {
 
 }
 
-export async function getNewUrl(req, res) {
+export async function editService(req, res) {
 
     const { shortUrl } = req.params;
 
