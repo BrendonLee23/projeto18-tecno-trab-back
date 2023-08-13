@@ -86,6 +86,8 @@ export async function userLogin(req, res) {
         }
         const [user] = existingUser.rows;
 
+        console.log(user.name, "vasco");
+
         if (bcrypt.compareSync(password, user.password)) {
 
             const token = v4();
@@ -93,7 +95,7 @@ export async function userLogin(req, res) {
             await db.query(`
             INSERT INTO sessions(token, "userId") VALUES ($1, $2)
             `, [token, user.id]);
-            return res.send(token);
+            return res.status(200).send({ token, userName: user.name });
         }
         else {
             res.sendStatus(401)
