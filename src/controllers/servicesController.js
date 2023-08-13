@@ -3,10 +3,10 @@ import { db } from '../database/database.connection.js'
 export async function createService(req, res) {
 
     const { user } = res.locals;
-    const {name, image, description, phoneNumber} = req.body;
+    const {name, image, description} = req.body;
 
     try {
-        if (!name || !image || !description || !phoneNumber) {
+        if (!name || !image || !description) {
             return res.status(400).send("Todos os campos são obrigatórios!");
         }
         const alreadyRegistered = await db.query(`SELECT FROM services WHERE name = $1`, [name])
@@ -16,14 +16,13 @@ export async function createService(req, res) {
 
         await db.query(
             `INSERT INTO services (name, image, description, "providerId", "phoneNumber") VALUES ($1, $2, $3, $4, $5)`,
-            [name, image, description, user.id, phoneNumber]);
+            [name, image, description, user.id, user.phoneNumber]);
         res.sendStatus(201);
 
     } catch (err) {
         res.status(500).send(err.message);
     }
 }
-
 export async function getAllServices(req, res) {
 
     try {
@@ -44,67 +43,66 @@ export async function getAllServices(req, res) {
     }
 
 }
-
 export async function getServicesById(req, res) {
 
     const { id } = req.params;
 
     try {
 
-        const { rows: result } = await db.query(`
+        const { rows: service } = await db.query(`
         
-            SELECT * FROM "urls" WHERE id=$1
+            SELECT * FROM services WHERE "providerId"=$1
         
         `, [id]);
 
 
-        if (!result.length > 0) {
+        if (!service.length > 0) {
 
             return res.sendStatus(404);
         }
 
-        const response = {
-
-            "id": result[0].id,
-            "shortUrl": result[0].shortUrl,
-            "url": result[0].oldURL
-
-        }
-
-        res.status(200).json(response);
+        res.status(200).json(service);
 
     } catch (err) {
         res.status(500).send(err.message);
     }
 
 }
-
 export async function editService(req, res) {
 
-    const { shortUrl } = req.params;
+    const { id } = req.params;
+    const { name, image, description } = req.body;
 
     try {
+        const { rows: service } = await db.query(
+            `
+            SELECT * FROM services WHERE id = $1
+            `,
+            [id]
+        );
 
-        const { rows: result } = await db.query(`
-
-            SELECT * FROM urls WHERE "shortUrl"=$1
-
-        `, [shortUrl]);
-        console.log(result);
-
-        if (!result.length > 0) {
-
+        if (service.length === 0) {
             return res.sendStatus(404);
-
         }
 
-        await db.query(`
-        
-            UPDATE "urls" SET "accessCount"="accessCount" + 1 WHERE "shortUrl"=$1
+        await db.query(
+            `
+            UPDATE services
+            SET name = $1, image = $2, description = $3
+            WHERE id = $4
+            RETURNING *
+            `,
+            [name, image, description, id]
+        );
 
-        `, [shortUrl]);
+        const updatedService = {
+            id: service[0].id,
+            name,
+            image,
+            description
+        };
 
-        res.redirect(result[0].shortUrl);
+        res.status(200).json({ message: 'Serviço editado com sucesso!', updatedService });
 
     } catch (err) {
         res.status(500).send(err.message);
@@ -139,7 +137,7 @@ export async function deleteService(req, res) {
         
         `, [id]);
 
-        res.sendStatus(204)
+        res.sendtatus(204).json({message: 'Serviço apagado com sucesso!'})
 
     } catch (err) {
         res.status(500).send(err.message);

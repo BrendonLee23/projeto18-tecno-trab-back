@@ -48,7 +48,6 @@ export async function createUser(req, res) {
             isValid = false;
             errorMessage = 'O nome é obrigatório';
         }
-
         if (!isValid) {
             return res.status(400).send(errorMessage);
         }
@@ -77,13 +76,12 @@ export async function userLogin(req, res) {
 
     const { email, password } = req.body;
 
+
     try {
 
-        const { rows: users } = await db.query(`
-        SELECT * FROM users WHERE email=$1
-        `, [email]);
+        const existingUser = await userRepository.getUserByEmail(req.body);
 
-        const [user] = users;
+        const [user] = existingUser;
 
         if (!user) {
             return res.sendStatus(401);
@@ -96,8 +94,8 @@ export async function userLogin(req, res) {
             await db.query(`
             INSERT INTO sessions(token, "userId") VALUES ($1, $2)
             `, [token, user.id]);
-            return res.send( token );
-        } 
+            return res.send(token);
+        }
         else {
             res.sendStatus(401)
         }
