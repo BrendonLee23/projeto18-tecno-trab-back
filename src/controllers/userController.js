@@ -74,18 +74,17 @@ export async function createUser(req, res) {
 }
 export async function userLogin(req, res) {
 
-    const { email, password } = req.body;
+    const { password } = req.body;
 
 
     try {
 
         const existingUser = await userRepository.getUserByEmail(req.body);
 
-        const [user] = existingUser;
-
-        if (!user) {
+        if (!existingUser) {
             return res.sendStatus(401);
         }
+        const [user] = existingUser.rows;
 
         if (bcrypt.compareSync(password, user.password)) {
 
@@ -107,7 +106,7 @@ export async function userLogin(req, res) {
 export async function getUsers(req, res) {
 
     try {
-        const users = await db.query(`SELECT id, name, to_char(born, 'YYYY-MM-DD') as born, email, password, address, "phoneNumber" FROM users;`)
+        const users = await userRepository.getUsers(req.body)
         res.send(users.rows).status(200)
     } catch (err) {
         res.status(500).send(err.message)
