@@ -76,7 +76,6 @@ export async function userLogin(req, res) {
 
     const { password } = req.body;
 
-
     try {
 
         const existingUser = await userRepository.getUserByEmail(req.body);
@@ -85,8 +84,6 @@ export async function userLogin(req, res) {
             return res.sendStatus(401);
         }
         const [user] = existingUser.rows;
-
-        console.log(user.name, "vasco");
 
         if (bcrypt.compareSync(password, user.password)) {
 
