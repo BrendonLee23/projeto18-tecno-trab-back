@@ -25,6 +25,7 @@ export async function createService(req, res) {
 }
 export async function getAllServices(req, res) {
 
+
     try {
         const { rows: servicesList } = await db.query(`
         
@@ -121,6 +122,7 @@ export async function deleteService(req, res) {
             SELECT * FROM services WHERE id=$1
         
         `, [id]);
+        console.log(serviceResult[0].providerId)
 
         if (user.id !== serviceResult[0].providerId) {
             return res.sendStatus(401);
@@ -143,4 +145,48 @@ export async function deleteService(req, res) {
         res.status(500).send(err.message);
     }
 
+}
+export async function editStatusService(req, res) {
+    const { id } = req.params;
+
+    try {
+        const { rows: service } = await db.query(
+            `
+            SELECT * FROM services WHERE id = $1
+            `,
+            [id]
+        );
+
+        if (service.length === 0) {
+            return res.sendStatus(404);
+        }
+
+        // Get the current isAvailable value
+        const currentIsAvailable = service[0].isAvailable;
+
+        // Toggle the value between true and false
+        const newIsAvailable = !currentIsAvailable;
+
+        await db.query(
+            `
+            UPDATE services
+            SET "isAvailable" = $1
+            WHERE id = $2
+            `,
+            [newIsAvailable, id]
+        );
+
+        // Retrieve the updated service
+        const { rows: updatedService } = await db.query(
+            `
+            SELECT * FROM services WHERE id = $1
+            `,
+            [id]
+        );
+
+        res.status(200).json({ message: 'Serviço editado com sucesso!', service: updatedService[0] });
+
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
 }
