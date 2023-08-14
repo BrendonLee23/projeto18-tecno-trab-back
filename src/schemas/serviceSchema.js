@@ -7,3 +7,4 @@ const serviceSchema = joi.object({
 });
 
 export default serviceSchema;
+
