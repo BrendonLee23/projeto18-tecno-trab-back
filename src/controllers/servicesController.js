@@ -122,13 +122,13 @@ export async function deleteService(req, res) {
             SELECT * FROM services WHERE id=$1
         
         `, [id]);
-        console.log(serviceResult[0].providerId)
+        console.log(serviceResult.providerId)
 
-        if (user.id !== serviceResult[0].providerId) {
+        if (user.id !== serviceResult.providerId) {
             return res.sendStatus(401);
         }
 
-        if (serviceResult[0].length === 0) {
+        if (serviceResult.length === 0) {
             return res.sendStatus(404);
         }
 
@@ -139,7 +139,7 @@ export async function deleteService(req, res) {
         
         `, [id]);
 
-        res.sendtatus(204).json({message: 'Serviço apagado com sucesso!'})
+        res.status(204).json({message: 'Serviço apagado com sucesso!'})
 
     } catch (err) {
         res.status(500).send(err.message);

@@ -2,13 +2,14 @@
 import bcrypt from 'bcrypt';
 import { v4 } from 'uuid';
 import { db } from '../database/database.connection.js';
-import { format } from 'date-fns';
+
 import userRepository from '../repository/user.repository.js';
 
 
 export async function createUser(req, res) {
 
-    const {user} = req.body;
+    const user = req.body;
+    console.log(user);
 
     try {
         let isValid = true;
@@ -62,6 +63,8 @@ export async function createUser(req, res) {
 }
 export async function userLogin(req, res) {
 
+    const {password} = req.body;
+
     try {
 
         const existingUser = await userRepository.getUserByEmail(req.body);
@@ -70,7 +73,7 @@ export async function userLogin(req, res) {
             return res.sendStatus(401);
         }
         const user = existingUser.rows[0];
-        const token = await userRepository.login(user)
+        const token = await userRepository.login(user, password)
         if(token) {
         res.status(200).send({ token, userName: user.name, userId: user.id });
         }

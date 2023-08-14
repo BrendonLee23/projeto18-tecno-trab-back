@@ -1,6 +1,7 @@
 import {db} from "../database/database.connection.js";
 import bcrypt from 'bcrypt';
 import { v4 } from 'uuid';
+import { format } from 'date-fns';
 
 async function getUserByEmail(payload){
     const {email} = payload
@@ -30,7 +31,7 @@ async function getUsers(){
     const users = await db.query(`SELECT id, name, to_char(born, 'YYYY-MM-DD') as born, email, password, address, "phoneNumber" FROM users;`)
         return users;
 }
-async function login(user){
+async function login(user, password){
 
 
 
