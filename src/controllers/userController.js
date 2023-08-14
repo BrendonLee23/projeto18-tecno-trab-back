@@ -8,6 +8,8 @@ import userRepository from '../repository/user.repository.js';
 
 export async function createUser(req, res) {
 
+    const {user} = req.body;
+
     try {
         let isValid = true;
         let errorMessage = '';
@@ -50,6 +52,7 @@ export async function createUser(req, res) {
             return res.status(400).send(errorMessage);
         }
         await userRepository.insertUser(req.body)
+
         res.sendStatus(201);
 
     } catch (error) {
