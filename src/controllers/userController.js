@@ -75,16 +75,19 @@ export async function createUser(req, res) {
 export async function userLogin(req, res) {
 
     const { password } = req.body;
-
+    console.log(req.body);
     try {
 
         const existingUser = await userRepository.getUserByEmail(req.body);
 
-        if (!existingUser) {
+        if (!existingUser.rows[0]) {
             return res.sendStatus(401);
         }
-        const [user] = existingUser.rows;
-
+        
+        const user = existingUser.rows[0];
+        console.log(user.password);
+        console.log(password);
+        console.log(existingUser.rows);
         if (bcrypt.compareSync(password, user.password)) {
 
             const token = v4();
