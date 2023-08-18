@@ -108,7 +108,6 @@ export async function editService(req, res) {
     } catch (err) {
         res.status(500).send(err.message);
     }
-
 }
 export async function deleteService(req, res) {
 
